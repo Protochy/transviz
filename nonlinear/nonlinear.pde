@@ -8,6 +8,7 @@ long inc = 0;
 PVector scaling = new PVector(100,-100);
 PImage ailu;
 PGraphics masker;
+PShape tex;
 
 
 import com.hamoid.*;
@@ -16,10 +17,15 @@ VideoExport videoExport;
 
 void setup(){
   size(1000,1000,P2D);
-  videoExport = new VideoExport(this, "hello.mp4");
-  //videoExport.startMovie();
+  videoExport = new VideoExport(this, "nonlinear.mp4");
+  videoExport.setQuality(85,0);
+  videoExport.setFrameRate(60);
+  frameRate(60);
+  
   
   smooth(8);
+  tex = loadShape("448319566.svg");
+  tex.scale(2);
   ailu = loadImage("upscale.PNG");
   ailu.resize((int) (ailu.width/1.3), (int) (ailu.height/1.3));
   masker = createGraphics(ailu.width,ailu.height);
@@ -33,6 +39,7 @@ void setup(){
   ailu.mask(masker);
   
   imageMode(CENTER);
+  rectMode(CENTER);
     
   for (int j = -5; j < 5; j++){
     List<PVector> lineSeg = new ArrayList();
@@ -49,6 +56,9 @@ void setup(){
     }
     planarLinesY.add(lineSeg);
   }
+  shapeMode(CENTER);
+  
+  videoExport.startMovie();
 }
 
 void draw(){
@@ -61,7 +71,7 @@ void draw(){
     if (j == planarLinesX.size()/2)
       stroke(255,255,255);
     else
-       stroke(255,0,255);
+       stroke(0,255,255);
     for (int i = 0; i < lineSeg.size()-1; i++){ // horiz lines
       PVector trans1 = applyTransform(lineSeg.get(i));
       PVector trans2 = applyTransform(lineSeg.get(i+1));
@@ -74,7 +84,7 @@ void draw(){
     if (j == planarLinesY.size()/2)
       stroke(255,255,255);
     else
-       stroke(255,0,255);
+       stroke(0,255,255);
     for (int i = 0; i < lineSeg.size()-1; i++){ // vert lines
       PVector trans1 = applyTransform(lineSeg.get(i));
       PVector trans2 = applyTransform(lineSeg.get(i+1));
@@ -82,9 +92,14 @@ void draw(){
     }
   }
   
-  stroke(0,255,0);
-  fill(0,255,0);
-  PVector tr = applyTransform(-1,0);
+  noStroke();
+  fill(0,0,0,140);
+  rect(30,360+20,tex.width+40,tex.height+50);
+  shape(tex,0,360);
+  
+  stroke(255,165,0);
+  fill(255,165,0);
+  PVector tr = applyTransform(-1,-2);
   //image(ailu,tr.x,tr.y);
   vector(tr);
   
