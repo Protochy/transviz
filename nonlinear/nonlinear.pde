@@ -2,7 +2,7 @@ import java.util.List;
 
 List<List<PVector>> planarLinesX = new ArrayList();
 List<List<PVector>> planarLinesY = new ArrayList();
-float lineWidth = 1;
+float lineWidth = 0.05;
 float c = 1;
 long inc = 0;
 PVector scaling = new PVector(150,-150);
@@ -17,7 +17,7 @@ VideoExport videoExport;
 
 void setup(){
   fullScreen(P2D);
-  videoExport = new VideoExport(this, "linear.mp4");
+  videoExport = new VideoExport(this, "deformcircle.mp4");
   videoExport.setQuality(85,0);
   videoExport.setFrameRate(60);
   frameRate(60);
@@ -26,7 +26,7 @@ void setup(){
   smooth(8);
   //tex = loadShape("448319566.svg");
   tex = createTex(color(255,0,255),
-  "f(x,y) = (x+y,x-y)",
+  "f(x,y) = (\\cos(x),\\sin(x))",
   this);
   println(tex.width);
   tex.scale(1000f/tex.width);
@@ -62,7 +62,7 @@ void setup(){
   }
   shapeMode(CENTER);
   
-  videoExport.startMovie();
+ // videoExport.startMovie();
 }
 
 void draw(){
@@ -89,6 +89,8 @@ void draw(){
        stroke(0,255,255);
     for (int i = 0; i < lineSeg.size()-1; i++){ // horiz lines
       PVector trans1 = applyTransform(lineSeg.get(i));
+      if (abs(trans1.x) > width/scaling.x || abs(trans1.y) > (-height/scaling.y))
+        continue;
       PVector trans2 = applyTransform(lineSeg.get(i+1));
       line(scaling.x*trans1.x,scaling.y*trans1.y,scaling.x*trans2.x,scaling.y*trans2.y); 
     }
@@ -102,6 +104,8 @@ void draw(){
        stroke(0,255,255);
     for (int i = 0; i < lineSeg.size()-1; i++){ // vert lines
       PVector trans1 = applyTransform(lineSeg.get(i));
+      if (abs(trans1.x) > width/scaling.x || abs(trans1.y) > (-height/scaling.y))
+        continue;
       PVector trans2 = applyTransform(lineSeg.get(i+1));
       line(scaling.x*trans1.x,scaling.y*trans1.y,scaling.x*trans2.x,scaling.y*trans2.y); 
     }
@@ -132,7 +136,7 @@ PVector applyTransform(float x, float y){
 }
 
 PVector N(float x, float y){
-  return new PVector(x+y,x-y);
+  return new PVector(2*cos(x),2*sin(x));
 }
 
 PVector applyTransform(PVector v){
