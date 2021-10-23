@@ -2,7 +2,7 @@ import java.util.List;
 
 List<List<PVector>> planarLinesX = new ArrayList();
 List<List<PVector>> planarLinesY = new ArrayList();
-float lineWidth = 0.02;
+float lineWidth = 1;
 float c = 1;
 long inc = 0;
 PVector scaling = new PVector(150,-150);
@@ -47,16 +47,16 @@ void setup(){
     
   for (int j = -4; j < 4; j++){
     List<PVector> lineSeg = new ArrayList();
-    for (float i = (int) (-0.5*width/scaling.x)-1; i < 0.5*width/scaling.x; i+=lineWidth){
+    for (float i = (int) (-0.5*width/scaling.x)-1; i <= 0.5*width/scaling.x+1; i+=lineWidth){
       lineSeg.add(new PVector(i,j));
     }
     planarLinesX.add(lineSeg);
   }
   
-  for (int j = -7; j < 7; j++){
+  for (int i = -7; i < 8; i++){
     List<PVector> lineSeg = new ArrayList();
-    for (float i = (int) (-0.5*height/scaling.x)-1; i < 0.5*height/scaling.x; i+=lineWidth){
-      lineSeg.add(new PVector(j,i));
+    for (float j = (int) (-0.5*height/scaling.x)-1; j <= 0.5*height/scaling.x+1; j+=lineWidth){
+      lineSeg.add(new PVector(i,j));
     }
     planarLinesY.add(lineSeg);
   }
