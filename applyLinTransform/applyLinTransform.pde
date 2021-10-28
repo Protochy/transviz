@@ -1,8 +1,12 @@
 PMatrix2D matrix;
 PShader glow;
+import java.util.List;
+import java.lang.*;
 
 import java.util.*;
+
 List<PMatrix2D> matrices = new ArrayList();
+List<PShape> maTex = new ArrayList();
 
 PVector input = new PVector(1,2);
 
@@ -22,22 +26,36 @@ void setup(){
   frameRate(60); 
   videoExport = new VideoExport(this,"matrix.mp4");
   videoExport.setFrameRate(60);
-  matrices.add(new PMatrix2D());
 
   matrices.add(new PMatrix2D(
--1,1           ,0,
+-1,2           ,0,
 1,1           ,0
 ));
 
-  PMatrix2D mt = new PMatrix2D(
--1,1           ,0,
+/*PMatrix2D inv = new PMatrix2D(matrices.get(0).m11,-matrices.get(0).m01,          matrices.get(0).m02,
+                                   -matrices.get(0).m10,matrices.get(0).m00,           matrices.get(0).m12);
+inv.scale(1/matrices.get(0).determinant());
+matrices.add(inv); */
+
+matrices.add(new PMatrix2D(
+1,0           ,0,
 1,1           ,0
-);
-mt.invert();
-matrices.add(mt);
+));
+
+matrices.add(new PMatrix2D(
+3,-2           ,0,
+0,1           ,0
+));
+
+matrices.add(new PMatrix2D(
+-1/3f,0           ,0,
+0,1/3f           ,0
+));
+
 
 matrix = new PMatrix2D();
 for (PMatrix2D m: matrices){
+  maTex.add(createMatrixTex(m));
   m.apply(matrix);
   matrix = m;
 }
@@ -45,6 +63,36 @@ for (PMatrix2D m: matrices){
 
   //videoExport.startMovie();
 }
+
+PShape createMatrixTex(PMatrix2D m){
+  return createTex(color(255,0,0),
+String.format("\\[\\begin{bmatrix} %s & %s \\\\ %s & %s \\end{bmatrix}\\]",formatEntry(m.m00),formatEntry(m.m01),formatEntry(m.m10),formatEntry(m.m11)),this);
+}
+
+String formatEntry(float n){
+  if (((int) n) == n)
+    return String.valueOf((int) n);
+  else
+    return convertDecimalToFraction(n);
+}
+
+static private String convertDecimalToFraction(double x){
+    if (x < 0){
+        return "-" + convertDecimalToFraction(-x);
+    }
+    double tolerance = 1.0E-6;
+    double h1=1; double h2=0;
+    double k1=0; double k2=1;
+    double b = x;
+    do {
+        double a = Math.floor(b);
+        double aux = h1; h1 = a*h1+h2; h2 = aux;
+        aux = k1; k1 = a*k1+k2; k2 = aux;
+        b = 1/(b-a);
+    } while (Math.abs(x-h1/k1) > x*tolerance);
+    return String.format("\\frac{%d}{%d}",(int) h1,(int) k1);
+}
+
 long inc = 0;
 void draw(){
   //shader(glow);
@@ -65,7 +113,12 @@ void draw(){
     line(0,-1000,0,1000);
     
   pushMatrix();
-    PMatrix2D interpolated = interpolate(matrices.get(index+1));
+  PMatrix2D interpolated;
+    if (matrices.size() == 1)
+      interpolated = new PMatrix2D(matrices.get(0).m00,matrices.get(0).m01,          matrices.get(0).m02,
+                                   -matrices.get(0).m10,-matrices.get(0).m11,           matrices.get(0).m12);
+    else
+      interpolated = interpolate(matrices.get(index+1));
     applyMatrix(interpolated);
     
     float det = interpolated.determinant();
@@ -108,23 +161,17 @@ void draw(){
   fill(255,165,0);
   interpolated.mult(ihat, transformedihat);
   transformedihat.y *= -1;
-  
-  if (frameCount < 65){
-  transformedihat.y += 0.2*sin(frameCount/4f);
-  transformedihat.x += 0.2*sin(frameCount/20f);
-  } 
+
   
   vector(transformedihat);
   stroke(255,0,255);
   fill(255,0,255);
   interpolated.mult(jhat, transformedjhat);
   transformedjhat.y *= -1;
-  
-  if (frameCount > 90 && frameCount < 90+65){
-    transformedjhat.x += 0.2*sin((frameCount-90)/4f);
-  transformedjhat.y += 0.2*sin((frameCount-90)/20f);
-  }
+
   vector(transformedjhat);
+  
+  
   //println(output);
   rectMode(CENTER);
   fill(0,0,0,150);

@@ -2,7 +2,7 @@ import java.util.List;
 
 List<List<PVector>> planarLinesX = new ArrayList();
 List<List<PVector>> planarLinesY = new ArrayList();
-float lineWidth = 0.05;
+float lineWidth = 0.1;
 float c = 1;
 long inc = 0;
 PVector scaling = new PVector(150,-150);
@@ -26,7 +26,7 @@ void setup(){
   smooth(8);
   //tex = loadShape("448319566.svg");
   tex = createTex(color(255,0,255),
-  "f(x,y) = (\\cos(x),\\sin(x))",
+  "f(x,y) = (e^x,e^y)",
   this);
   println(tex.width);
   tex.scale(1000f/tex.width);
@@ -136,7 +136,7 @@ PVector applyTransform(float x, float y){
 }
 
 PVector N(float x, float y){
-  return new PVector(2*cos(x),2*sin(x));
+  return new PVector((float) Math.exp(x+y),(float) Math.exp(x-y));
 }
 
 PVector applyTransform(PVector v){
