@@ -145,7 +145,7 @@ void draw(){
   strokeWeight(5);
   
   fill(200,255,0);
-  rect(0,0,150,150);
+  //rect(0,0,150,150);
   popMatrix();
 
   stroke(192,192,192,150);
@@ -176,12 +176,21 @@ void draw(){
   rectMode(CENTER);
   fill(0,0,0,150);
   noStroke();
-  rect(50,410,850,96);
+  //rect(50,410,850,96);
   rectMode(CORNER);
   textSize(100);
   textAlign(LEFT);
   fill(255,255,0);
-  text("Determinant: " + round(-det*100)/100f,-320,440);
+ // text("Determinant: " + round(-det*100)/100f,-320,440);
+ float widthSum = 0;  
+ //shapeMode(CENTER);
+  for (int i = 0; i <= index+1; i++){
+    circle(250-widthSum,160,30);
+    shape(maTex.get(i),250-widthSum,160);
+    if (i != index+1)
+      widthSum += maTex.get(i+1).getWidth() + 20;
+    //println(maTex.get(i+1).width);
+  }
   
   if (click)
     if (inc < end)
@@ -195,6 +204,8 @@ void draw(){
   
    
 }
+
+
 boolean click = false;
 void keyPressed() {
   if (key == 'q') {
